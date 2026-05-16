@@ -19,31 +19,31 @@ firebase_admin.initialize_app(cred, {
 })
 ref = db.reference("/") # ruta raiz
 
-#-----------------------
+#----------------------- 
 
 
 makedirs(backup_dir, exist_ok=True) # crear carpeta si no existe
 
 def createBackup():
-    data = ref.get()
+    data = ref.get() # firebase kontua
     datenow = datetime.now().strftime("%d-%m-%Y_%H-%M") # fecha actual
     current = path.join(backup_dir, f"backup{datenow}.json") # crear archivo
     with open(current, "w", encoding="utf-8") as a:
         dump(data, a, ensure_ascii=False, indent=4) # crear json con 4 espacios
 
 def applyBackup(filename):
-    with open(filename, "r", encoding="utf-8") as f:
-        data = load(f)
+    with open(filename, "r", encoding="utf-8") as f: # fitxategia irakurri
+        data = load(f) # fitxategiaren informazioa edukia hartu eta gorde aldagi batean
     ref.set(data) # poner en la ruta el archivo
 
 def openNote(file_name):
     startfile(path.join(backup_dir, file_name)) # iniciar archivo en otro navegador
 
 while True:
-    result = radiolist_dialog( # crear menu
-        title="Vendy Tool",
-        text="Selecciona una opción:",
-        values=[
+    result = radiolist_dialog( # sortu menu
+        title="Vendy Tool", # izena
+        text="Selecciona una opción:", # izenburua
+        values=[ # aukerak
             ("1", "Crear backup"),
             ("2", "Ver backups"),
             ("3", "Aplicar backup en Vendy"),
@@ -51,31 +51,31 @@ while True:
         ],
     ).run()
 
-    if result == "1":
-        system("cls" if name == "nt" else "clear")
-        createBackup()
-        datenow = datetime.now().strftime("%d-%m-%Y_%H-%M")
-        print(f"Backup creado: backup{datenow}")
+    if result == "1": # lehenengo aukeraren baldintza
+        system("cls" if name == "nt" else "clear") # terminala garbitu
+        createBackup() # sortu backup
+        datenow = datetime.now().strftime("%d-%m-%Y_%H-%M") # momentu egoerako data jakiteko
+        print(f"Backup creado: backup{datenow}") # sortutako pantailan erakutsi
         input("Enter...")
 
-    elif result == "2":
-        lista = listdir(backup_dir)
-        if not lista:
+    elif result == "2": # bigarren aukeraren baldintza
+        lista = listdir(backup_dir) # backup karpetaren barruan zerrendatzea
+        if not lista: # lista ez bada
             print("No hay backups disponibles.")
             input("Enter...")
             continue
 
-        result = radiolist_dialog(
+        result = radiolist_dialog( # sortu menua
             title="Ver backups",
             text="Selecciona un backup:",
-            values=[(file, file) for file in lista],
+            values=[(file, file) for file in lista], # for bukle baten bidez backup direktorioaren fitxategiak erakutsi.
         ).run()
 
-        if result:
-            openNote(result)
+        if result: # erantzuten ba dugu
+            openNote(result) # funtzioa deitu
 
-    elif result == "3":
-        lista = listdir(backup_dir)
+    elif result == "3": # hirugarren aukeraren baldintza
+        lista = listdir(backup_dir) # goikoaren berdina
         if not lista:
             print("No hay backups disponibles.")
             input("Enter...")
@@ -87,7 +87,7 @@ while True:
             values=[(file, file) for file in lista],
         ).run()
 
-        if result:
+        if result: 
             applyBackup(path.join(backup_dir, result))
             print(f"Backup {result} aplicada en la base de datos.")
             input("Enter...")
